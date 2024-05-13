@@ -1,0 +1,57 @@
+span {
+  font-family : 'Reddit Mono';
+  font-size   : 0.8em;
+}
+
+.span-err-intent {
+  background-color : #fbd9d3;
+  border-radius: 5px;
+}
+
+.span-ok-intent {
+  background-color : #90EE90;
+  border-radius: 5px;
+}
+
+.span-warning-intent {
+  background-color : #facf7f;
+  border-radius: 5px;
+}
+
+.span-err-state {
+  background-color : #fbd9d3;
+  border-radius: 5px;
+}
+
+.span-ok-state {
+  background-color : #90EE90;
+  border-radius: 5px;
+}
+
+.span-warning-state {
+  background-color : #facf7f;
+  border-radius: 5px;
+}
+
+.span-ok {
+  background-color : #90EE90;
+  border-radius: 5px;
+}
+
+.span-err {
+  background-color : #fbd9d3;
+  border-radius: 5px;
+}
+
+#non-selectable{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.spec {
+  font-style: italic;
+}

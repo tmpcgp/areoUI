@@ -1,0 +1,10 @@
+/* ta -> textarea */
+textarea {
+  padding : 5px;
+  margin  : 5px;
+  width   : 100%;
+  border-radius: 5px;
+  border-color : #87ceeb;
+  font-family  : 'Reddit Mono';
+  font-size    : .76em;
+}

@@ -1,0 +1,130 @@
+.message__outer {
+  display: flex;
+}
+.message__actions {
+  width: 67px;
+  padding-right: 5px;
+}
+.message__bubble {
+  max-width: calc(100% - 67px);
+  overflow-wrap: break-word;
+}
+
+.message__actions {
+  flex-shrink: 0;
+}
+.message__spacer {
+  flex: 1;
+}
+.message__inner {
+  flex: 1;
+  display: flex;
+  flex-direction: row-reverse;
+}
+.message__actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 67px;
+  padding-right: 5px;
+}
+
+/* You, blue messages */
+
+/* First message */
+.message--first .message__bubble {
+  border-end-end-radius: 4px;
+}
+
+/* Middle message */
+.message--middle .message__bubble {
+  border-start-end-radius: 4px;
+  border-end-end-radius: 4px;
+}
+
+/* Last message */
+.message--last .message__bubble {
+  border-start-end-radius: 4px;
+}
+
+.image {
+  display: block;
+  border-radius: 18px;
+  border: 1px solid #0006;
+  overflow: hidden;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  /* Revert the padding to make the gallery aligned
+    with its siblings. */
+  margin: -2px;
+}
+
+.gallery__item {
+  /* Add a 2px offset around each image, will result in 4
+    for two adjacent images. */
+  padding: 2;
+}
+
+.gallery__item--third {
+  flex: 33.33%;
+}
+
+.gallery__item--half {
+  flex: 50%;
+}
+
+.message--washed {
+  border-bottom-right-radius: 0;
+  padding: 8px 12px 9px;
+  margin-bottom: -17px;
+}
+
+.message--washed__text {
+  padding-bottom: 12px;
+}
+
+.message__row {
+  min-width: 0;
+  /* other styles */
+}
+
+.image__main {
+  max-width: 480px;
+}
+
+.image__element {
+  max-width: 100%;
+  position: relative;
+}
+
+.image__aspectRatio {
+  position: relative;
+}
+
+.image__wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.image__wrapper img {
+  display: block;
+  max-width: 100%;
+  max-height: 200px;
+  width: 100%;
+  height: 100%;
+}
+
+.messages-parent {
+  background-color: #3a12ff;
+  background-image: linear-gradient(#faaf00, #ff2e2e, #3a12ff);
+}

@@ -1,0 +1,12 @@
+.chat-container {
+  display : block;
+}
+
+.container-container {
+}
+
+.container-dialog {
+  display : inline-block;
+  align-items : center;
+  width : 75%;
+}

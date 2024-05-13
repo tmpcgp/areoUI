@@ -1,0 +1,9 @@
+button {
+  cursor : pointer;
+  padding : 5px;
+  margin  : 5px;
+  border-radius: 5px;
+  border-color : #87ceeb;
+  font-family  : 'Reddit Mono';
+  transition-duration : 2s;
+}

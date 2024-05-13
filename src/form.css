@@ -1,0 +1,17 @@
+form {
+  padding : 8vh;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  max-width   : 350px;
+  width   : 35vw;
+  height  : 100%;
+  border-radius: 5px;
+  overflow : auto;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.splitted-form-at-config {
+  max-width   : 450px;
+}
