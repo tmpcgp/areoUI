@@ -27,22 +27,39 @@ function Demo() {
   const RESTART     = "restart_server";
   const C_MSG       = "clearMsgs";
 
-  const conv_id                   = "somewierdandlongid";
-  const msg                       = useRef();
-  const dispatch                  = useDispatch();
-  const [messages, setMessages]   = useState([]); 
+  const conv_id                     = "somewierdandlongid";
+  const msg                         = useRef();
+  const dispatch                    = useDispatch();
+  const [disable, setDisable]       = useState(false);
+  const [messages, setMessages]     = useState([]); 
   const [state_conv, setState_conv] = useState("Initiating Conversation...");
-  const [connected, setConnected] = useState(false);
-  var username                    = "[Some Ordinary Human]";
+  const [connected, setConnected]   = useState(socket.connected);
+  var username                      = "[Human]";
+
+  const handle_on_error = () => {
+    console.log("@handle_on_error");
+    return "Something went wrong when connecting to the server.";
+  }
+
+  const handle_on_success = () => {
+    console.log("@handle_on_success");
+
+    // on sucess connect socket
+    socket.connect();
+    setDisable(false);
+
+    return "Restarted the server.";
+  };
 
   const restart_server = () => {
     console.log("@restart_server");
+    setDisable(true);
+
     toast.promise (
-      axios.get( REACT_APP_URL_RESTART_SERVER  ),
-      {
+      axios.get( REACT_APP_URL_RESTART_SERVER  ), {
         loading:"Restarting the server.",
-        success:"Restarted the server.",
-        error  :"Something went wrong when connecting to the server.",
+        success:() => handle_on_success,
+        error  :() => handle_on_error,
       }, {id:RESTART}
     );
 
@@ -85,21 +102,16 @@ function Demo() {
     if ( auth() ) {
       username = localStorage.getItem("name");
       dispatch ( isLoggedIn(true) );
-    } else { 
-      // set the username to soemthing else
-      username = "tester";
     }
 
-    socket.connect();
+    // socket.connect();
 
     socket.on('connect_error', error => {
       console.log("Cannot connect to the Xatkit server");
-      setConnected ( false );
-      toast.error("Something went wrong when connecting to the server.", {id : "err_conn_fail"});
+      toast.error("Can't establish the socket connection.", {id : "err_conn_fail"});
+      socket.disconnect();
     });
     socket.on('connect', () => {
-      setConnected( true );
-      // @Incomplete to do.
       socket.emit('init', {
         hostname: window.location.hostname,
         url: window.location.href,
@@ -109,9 +121,12 @@ function Demo() {
     });
     socket.on('init_confirm', (session) => {
       console.log("@init_confirm " + JSON.stringify( session ));
+      setConnected(true);
     });
     socket.on('bot_message', (message) => {
+      if(disable) { setDisable(false); }
       console.log("onBotMessage type text " + JSON.stringify(message) );
+
       const nmsg = {
         content : message.message,
         you     : false,
@@ -131,6 +146,7 @@ function Demo() {
     const init_info = () => { console.log("@init"); }
     const onERR     = () => {
       toast.error ("Connection with the server is lost.", {id : "err_lost_conn"});
+      socket.disconnect();
     }
 
     const bot_msg_info       = () => { console.log("@bot_msg_info"); }
@@ -188,7 +204,6 @@ function Demo() {
   const clearMsgs = () => {
     console.log("@clearMsgs");
     setMessages( [] );
-    toast.success("Messages cleared.", {id : C_MSG});
   }
 
   return (
@@ -208,13 +223,10 @@ function Demo() {
         Demo ``Xatkit chatting with {username}``
       </h1>
       <div className="container-dialog">
+        <span>Status :: {connected ? "Connected!" : "Disconnected..."}</span>
         <input onChange={(e) => setState_conv("Responding...")} type="text" ref={msg} placeholder="Input something"/>
-        <button onClick={handleMsg}>
-          Send
-        </button>
-        <button onClick={restart_server}>
-          Restart the server.
-        </button>
+        <button onClick={handleMsg}>Send</button>
+        <button disabled={disable} onClick={restart_server}>{disable ? "Restarting..." : "Restart the server."}</button>
       </div>
       <div className="chat-container">
         {list_msgs}

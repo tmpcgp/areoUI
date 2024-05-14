@@ -5,6 +5,8 @@ import Nav from "./Nav.js";
 import auth from "./auth";
 import {quicksort, levenshtein}  from "./utils.js";
 
+import useHotkeys from "@reecelucas/react-use-hotkeys";
+
 import 'reactflow/dist/style.css';
 import "./label.css"; import "./form.css";
 import "./span.css";
@@ -73,6 +75,17 @@ function Config() {
     "Several Answers",
     "Choices",
   ];
+
+  // hot keys 
+  useHotkeys("Control+d", () => {
+    console.log("@hitting shotcut key control+d");
+    handleDemo();
+  });
+  useHotkeys("Control+v", () => {
+    console.log("@hitting shotcut key control+v");
+    persistAll();
+  });
+  // hot keys [end]
 
 
   // to show to everyone
@@ -186,55 +199,7 @@ function Config() {
   /* int     */ const CTRL_CODE = 17;
   /* int     */ const SKEY_CODE = 83;
   /* int     */ const DKEY_CODE = 68;
-  const handleKeyPress = useCallback((event) => {
-    if (event.keyCode === CTRL_CODE) {
-      pressedCtrl = true;
-    } else {
-      if (event.keyCode === SKEY_CODE && pressedCtrl) {
-        if (isLoggedIn) {
-          persistAll();
-        } else {
-          toast.error("You're not connected to perform this action!", {id:ERRCON});
-        }
-      } else if (event.keyCode === DKEY_CODE && pressedCtrl){
-        handleDemo();
-      }
-    }
-  },[]);
-
-  const handleKeyRelease = useCallback((event) => {
-    console.log("Key release with code " + event.keyCode);
-    if (event.keyCode === 17) {
-      pressedCtrl = false;
-    } else {
-      /* do nothing */
-    }
-  },[]);
-
-
-  useEffect(() => {
-    console.log("@Config component is mounting.");
-
-    // attach the default key listeners
-    document.addEventListener('keydown', handleKeyPress);
-    document.addEventListener('keyup', handleKeyRelease);
-
-    if ( auth () ) {
-      dispatch ( isLoggedIn( true ) );
-      reconstitute_config();
-    }
-    else {
-      dispatch ( isLoggedIn( false ) );
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-      document.removeEventListener('keyup', handleKeyRelease);
-    };
-
-  }, []);
-  
-
+ 
   const toggleModeViz = () => {
     setModeViz(mode_viz === GRAPH ? FORM : GRAPH);
   }
@@ -334,7 +299,7 @@ function Config() {
     reset_inputs ( curr_form_id );
     
     name_intent.current.value = intent_to_change.name;
-    t_sentences.current.value = intent_to_change.content_array.join("\n");
+    t_sentences.current.value = intent_to_change.trainingSentences.join("\n");
 
     setModify_intent ( {content_idx : idx, status : true } );
     toast.custom(<div>{"⚠️ Modifying intent with name ``" + intent_to_change.name + "``"}</div>, {id : "mod curr intent" }); // this is the warning one
@@ -782,7 +747,7 @@ function Config() {
     const nstate_arr       = states.filter ( (_, idx) => idx !== i );
 
     setStates ( nstate_arr );
-    toast.success("Deleted State with name ``" + state_selected + "``", {id : "del state" });
+    toast.success("Deleted State with name ``" + state_selected.name + "``", {id : "del state" });
 
     // reset
     const curr_form_id = "state";
@@ -854,7 +819,7 @@ function Config() {
   const search_by_intent_name = (n2) => {
     console.log("@search_by_intent_name");
 
-    toast.loading ("Searching intents", {id : SINTENT});
+    toast.loading ("Searching intents...", {id : SINTENT});
     const narr_scores = intents.map ( (element) => {
       const n1    = element.name;
       const score = levenshtein(n1, n2);
@@ -873,7 +838,7 @@ function Config() {
   const search_by_state_name  = (n2) => {
     console.log("@search_by_state_name");
 
-    toast.loading ("Searching states", {id : SSTATE});
+    toast.loading ("Searching states...", {id : SSTATE});
     const narr_scores = states.map ( (element) => {
       const n1    = element.name;
       const score = levenshtein(n1, n2);
@@ -891,18 +856,19 @@ function Config() {
 
   // demo the current config
   const handleDemo = () => {
+    console.log("@handleDemo");
     // saves the whole stuff in the localStorage
     const intents_value = intents;
     const states_value  = states;
     const config        = {
-      intents : intents_value,
-      states  :  states_value,
+      intents : intents,
+      states  : states ,
     };
 
-    localStorage.setItem("dconfig", config); // dconfig for demo-config
-
-    // @Todo Incomplete make something out of it.
-    // use the toast.promise stuff.
+    console.log("@handleDemo(states)  " + JSON.stringify(intents));
+    console.log("@handleDemo(intents) " + JSON.stringify(states));
+    // localStorage.setItem("dconfig", config); // dconfig for demo-config
+    
     toast.promise(
       axios.post (REACT_APP_URL_CONFIG_DEMO, config),
       {
@@ -939,13 +905,13 @@ function Config() {
       />
       <Nav/>
       <button onClick={persistAll}>
-        Persist (Ctrl + s)
+        Persist To Central(Ctrl + s)
       </button>
       <button onClick={handleDemo}>
-        Demo (Ctrl + d)
+        Persist To Demo (Ctrl + d)
       </button>
       <button onClick={toggleModeViz}>
-        Toggle visualization mode
+        Toggle mode
       </button>
       <span>
         ( Current mode : {mode_viz === GRAPH ? "Graph" : "Form"})
@@ -1025,7 +991,7 @@ function Config() {
                   <br/>
                   <hr/>
                   <div className="states-pool-container">
-                    <button onClick={haultWindowIntents} type="button">
+                    <button onClick={haultWindowStates} type="button">
                       Open in new window
                     </button>
                     { !newWindowState ?

@@ -12,9 +12,7 @@ const W = 810;
 const H = 610;
 
 const go_previous_page_command = "CommandOrControl+p";
-const ctrl_r_command           = "CommandOrControl+r";
-const f5_command               = "F5";
-const disable                  = [go_previous_page_command, ctrl_r_command, f5_command];
+const disable                  = [go_previous_page_command];
 
 // to disable, nav bar is doing the job.
 // override the go back stuff.
