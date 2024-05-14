@@ -81,7 +81,7 @@ function Config() {
     console.log("@hitting shotcut key control+d");
     handleDemo();
   });
-  useHotkeys("Control+v", () => {
+  useHotkeys("Control+s", () => {
     console.log("@hitting shotcut key control+v");
     persistAll();
   });
@@ -678,7 +678,7 @@ function Config() {
         <hr/>
         {
           modify_state.type === ANS_TYPE ?
-          <button type="button" onClick={(e) => persistAns(idx, e)}>Persist answer</button>
+          <button type="button" onClick={(e) => persistAns(idx, e)}>{modify_intent.status ? "Create Intent" : "Modify New"}</button>
           :
           <button type="button" onClick={(e) => deleteMultAns(idx, e)}>
             Close/Delete
