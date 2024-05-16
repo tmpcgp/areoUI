@@ -14,6 +14,9 @@ import { useState, useRef, useEffect } from 'react';
 import { isLoggedIn } from './isLoggedInSlice';
 import { REACT_APP_URL_LOGIN } from './globals.js';
 
+import 'katex/dist/katex.min.css';
+import Latex from 'react-latex-next';
+
 function App() {
 
   const isLogged_in = useSelector((state) => state.logged_in.value); const dispatch    = useDispatch();
@@ -60,6 +63,9 @@ function App() {
   return (
     <div className="App">
       <Nav/>
+      <Latex>
+        We give illustrations for the {1 + 2} processes $e^+e^-$, gluon-gluon and $\\gamma\\gamma \\to W t\\bar b$.
+      </Latex>
       <h1>
         { isLogged_in ? "Hey " + localStorage.getItem("name") + "👋" : "Configure your 🤖 now!" }
       </h1>
