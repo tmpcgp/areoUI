@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { v4 as uuid } from 'uuid'
 import axios from 'axios';
 import auth from "./auth";
 import Nav from "./Nav.js";
@@ -26,6 +25,7 @@ function Create () {
   const nav         = useNavigate();
  
   const name_ref = useRef();
+  const key_ref  = useRef();
   const spec_ref = useRef();
 
   const [secret, setSecret] = useState("");
@@ -39,16 +39,6 @@ function Create () {
       // do nothing
     }
   },[]);
-
-  const generateUUID = (event) => {
-    console.log("@generateUUID");
-    const content = event.target.value;
-    if ( content === "" ) {
-      setSecret ( "" );
-    } else {
-      setSecret ( uuid () );
-    }
-  }
 
   const handlePaste = () => {
     console.log ( "@handlePaste" );
@@ -124,15 +114,19 @@ function Create () {
         <form onSubmit={(e) => handleSubmit(e)}>
           <br/>
           <label>Your name</label>
+
           <br/>
-          <input required type="text" placeholder="What's your name ?" ref={name_ref} onChange={(e) => generateUUID(e)} />
+          <input required type="text" placeholder="What's your name ?" ref={name_ref}/>
           <br/>
+
+          <label>Your password</label>
+          <br/>
+          <input required type="text" placeholder="What's your Key ?" ref={key_ref}/>
+
           <label>Your Specialisation</label><br/>
+          <br/>
           <input required type="text" placeholder="What's your Specialisation ?" ref={spec_ref}/>
           <hr/>
-          <span id="non-selectable" title="Dont share it with anyone 🤫">Your secret token is {secret === "" ? "🤷" : secret}</span>
-          <button type="button" onClick={handlePaste}>📋</button>
-          <br/>
           <div className="container-button-submit-create-form">
             <button type="submit">Create account</button>
           </div>
