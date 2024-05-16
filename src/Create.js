@@ -13,6 +13,7 @@ import "./nav.css";
 import "./span.css";
 
 import toast, { Toaster } from 'react-hot-toast';
+import {ok} from "./globals.js";
 import { useSelector, useDispatch } from 'react-redux';
 import { isLoggedIn } from './isLoggedInSlice';
 import { REACT_APP_URL_ACC } from './globals.js';
@@ -59,10 +60,6 @@ function Create () {
     }, (err) => {
       toast.error("Something went terribly wrong...", config);
     });
-  }
-
-  const ok = ( code ) => {
-    return code >= 200 && code < 300;
   }
 
   const handleSubmit = (e) => {

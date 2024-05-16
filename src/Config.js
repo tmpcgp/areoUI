@@ -17,6 +17,13 @@ import "./ta.css";
 import "./svg.css";
 import "./button.css";
 
+// components
+import IntentsListView from "./Components/IntentsListView";
+import StatesListView  from "./Components/StatesListView";
+import AnswersListView from "./Components/AnswersListView.js";
+import ChoicesListView from "./Components/ChoicesListView.js";
+import GraphView       from "./Components/GraphView.js";
+
 import NewWindow from 'react-new-window'
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector, useDispatch } from 'react-redux';
@@ -89,32 +96,23 @@ function Config() {
 
 
   // to show to everyone
-  const [mode_viz, setModeViz]              = useState ( FORM );
-  const [loading_intent, setLoading_intent] = useState ("");
-  const [loading_state, setLoading_state]   = useState ("");
-  const [loading, setLoading]               = useState ( false );
-  const [mode, setMode]                     = useState ({"current" : true}); // true if the current mode is answers
-  const [modify_intent, setModify_intent]   = useState ( {content_idx : 0, status : false} );
-  const [modify_state, setModify_state]     = useState ( {content_idx : 0, status : false, type : NOTHING_TYPE} ); // type : "ans" | "choice" | "Nothing", status -> if we're modifying stuff.
-  const [redirect, setRedirect]             = useState ( "" );
-  const [answers, setAnswers]               = useState ( [] );
-  const [states, setStates]                 = useState ( [] ); 
-  const [onIntent, setOnIntent]             = useState ( "" );
-  const [intents, setIntents]               = useState ( [] );
-  const [choices, setChoices]               = useState ( [] );
-
+  const [mode_viz, setModeViz]                = useState ( FORM );
+  const [loading_intent, setLoading_intent]   = useState ("");
+  const [loading_state, setLoading_state]     = useState ("");
+  const [loading, setLoading]                 = useState ( false );
+  const [mode, setMode]                       = useState ({"current" : true}); // true if the current mode is answers
+  const [modify_intent, setModify_intent]     = useState ( {content_idx : 0, status : false} );
+  const [modify_state, setModify_state]       = useState ( {content_idx : 0, status : false, type : NOTHING_TYPE} ); // type : "ans" | "choice" | "Nothing", status -> if we're modifying stuff.
+  const [redirect, setRedirect]               = useState ( "" );
+  const [answers, setAnswers]                 = useState ( [] );
+  const [states, setStates]                   = useState ( [] ); 
+  const [onIntent, setOnIntent]               = useState ( "" );
+  const [intents, setIntents]                 = useState ( [] );
+  const [choices, setChoices]                 = useState ( [] );
   const [newWindowIntent, setNewWindowIntent] = useState(false);
   const [newWindowState, setNewWindowState]   = useState(false);
   const [nodes, setNodes, onNodesChange]      = useNodesState([]);
   const [edges, setEdges, onEdgesChange]      = useEdgesState([]);
-
-  /* some examples (blueprints)
-  const initialNodes = [
-    { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-    { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-  ];
-  const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
-  */
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -182,10 +180,6 @@ function Config() {
         });
       });
 
-      // @Incomplete Edges wont render : fix
-      console.log("@transpiled_edges : " + JSON.stringify(transpiled_edges));
-      console.log("@transpiled nodes : " + JSON.stringify(transpiled_nodes));
-
       setEdges(transpiled_edges);
     }
     else {
@@ -193,13 +187,6 @@ function Config() {
     }
   }, [mode_viz]);
 
-
-  // @Incomplete to test (caching mechanism).
-  /* boolean */ var pressedCtrl = false;
-  /* int     */ const CTRL_CODE = 17;
-  /* int     */ const SKEY_CODE = 83;
-  /* int     */ const DKEY_CODE = 68;
- 
   const toggleModeViz = () => {
     setModeViz(mode_viz === GRAPH ? FORM : GRAPH);
   }
@@ -707,18 +694,7 @@ function Config() {
       </div>
     );
 
-  const list_intents = 
-    intents.map ( (intent, idx) => 
-      <div key={idx} className="intents-pool-child" title="Click to modify" onClick={() => handleChangeIntent(intent, idx)}>
-        <span key={idx + 1}>Intent's name :: {intent.name}</span><br/>
-        <hr/>
-        <div className="button-close-delete-container">
-          <button type="button" onClick={(e) => deleteIntent ( idx, e ) }>Close/Delete</button>
-        </div>
-      </div>
-    );
-
-
+  
   const handleChangeState = (state, i) => {
     console.log( "@handleChangeState" );
 
@@ -914,127 +890,132 @@ function Config() {
         Toggle mode
       </button>
       <span>
-        ( Current mode : {mode_viz === GRAPH ? "Graph" : "Form"})
+        ( Current mode : {mode_viz === GRAPH ? "Graph/Scroll to zoom." : "Form/CtrlShift+, Ctrl- to zoom."})
       </span>
       {
         mode_viz === FORM ?
         <div className="parent-container">
-          {
-            !loading ? 
-            <>
-              <div className="intents-container">
-                <form className="splitted-form-at-config" onSubmit={( e ) => handleSubmitIntent ( e )}>
-                  <h1> Intents-form </h1>
-                  <br/>
-                  <label>Choose the intent's name</label>
-                  <br/>
-                  <input required ref={name_intent} type = "text" placeholder = "Intent's name"/>
-                  <br/>
-                  <label>Input training_sentences</label>
-                  <br/>
-                  <textarea required ref={t_sentences} type = "text"/>
-                  <br/>
-                  <div className="submit-button-form-container">
-                    <button type="submit">{modify_intent.status ? "Persist Intent" : "Submit Intent"}</button>
-                  </div>
-                  <hr/>
-                  <div className="intents-pool-container">
-                    <button onClick={haultWindowIntents} type="button">
-                      Open in new window
-                    </button>
-                    { !newWindowIntent ?
-                      <>
-                        <input onChange={(e) => search_by_intent_name(e.target.value)} type = "text" placeholder = "Search By Intent Name 🔎"/>
-                        { list_intents }
-                      </>
-                      :
-                      <NewWindow onUnload={haultWindowIntents} name="Intents View" title="Intents View">
-                        <input onChange={(e) => search_by_intent_name(e.target.value)} type = "text" placeholder = "Search By Intent Name 🔎"/>
-                        { list_intents }
-                      </NewWindow>
-                    }
-                  </div>
-                </form>
+          <div className="intents-container">
+            <form className="splitted-form-at-config" onSubmit={( e ) => handleSubmitIntent ( e )}>
+              <h1> Intents-form </h1>
+              <br/>
+              <label>Choose the intent's name</label>
+              <br/>
+              <input required ref={name_intent} type = "text" placeholder = "Intent's name"/>
+              <br/>
+              <label>Input training_sentences</label>
+              <br/>
+              <textarea required ref={t_sentences} type = "text"/>
+              <br/>
+              <div className="submit-button-form-container">
+                <button type="submit">{modify_intent.status ? "Persist Intent" : "Submit Intent"}</button>
               </div>
-
-              <div className="states-container">
-                <form className="splitted-form-at-config" onSubmit={(e) => handleSubmitState(e)}>
-                  <h1>
-                    States-form
-                  </h1>
-                  <br/>
-                  <label>Choose the State's name</label>
-                  <br/>
-                  <input required ref={name_status} type = "text" placeholder = "State's name"/>
-                  <br/>
-                  <button type="button" onClick={toggleMode}>Toggle Mode</button> <span>(current = { mode.current ? modes[0] : modes[1] })</span> 
-                  <br/>
-                  <input className="expect-answers-input" ref={ans_status} type = "text" placeholder = {mode.current ? "Enter Answer(s)" : "Enter Choice(s) content"}/> 
-
-                  { ! mode.current ? <input className="expect-answers-input" required type="text" placeholder="Redirect to State" value={redirect} onChange={(e) => verify_redirect_value(e)} /> : "" }
-                  { mode.current ? <button type="button" onClick={appendMultAns}> ➕ </button> : <button type="button" onClick={appendChoices}> ➕  </button> }
-
-                  <div className="mult-pool-container">
-                    { mode.current ?
-                      list_answers
-                      :
-                      list_choices
-                    }
-                  </div>
-                  <br/>
-                  <label>Execute when intent.</label><br/>
-                  <input value={onIntent} onChange={(e) => verify_if_intent(e)} placeholder = "Execute When Intent"/>
-                  <br/>
-                  <div className="submit-button-form-container">
-                    <button type="submit">{modify_state.type === STATE_TYPE ? "Persist State" : "Submit State"}</button>
-                  </div>
-                  <br/>
-                  <hr/>
-                  <div className="states-pool-container">
-                    <button onClick={haultWindowStates} type="button">
-                      Open in new window
-                    </button>
-                    { !newWindowState ?
-                      <>
-                        <input onChange={(e) => search_by_state_name(e.target.value)} type = "text" placeholder = "Search By State Name 🔎"/>
-                        { list_states }
-                      </>
-                      :
-                      <NewWindow onUnload={haultWindowStates} name="States View" title="States View">
-                        <input onChange={(e) => search_by_state_name(e.target.value)} type = "text" placeholder = "Search By State Name 🔎"/>
-                        { list_states }
-                      </NewWindow>
-                    }
-                  </div>
-                </form>
+              <hr/>
+              <div className="intents-pool-container">
+                <button onClick={haultWindowIntents} type="button">
+                  Open in new window
+                </button>
+                { !newWindowIntent ?
+                  <>
+                    <input onChange={(e) => search_by_intent_name(e.target.value)} type = "text" placeholder = "Search By Intent Name 🔎"/>
+                    <IntentsListView 
+                      intents={intents}
+                      handleChangeIntent={handleChangeIntent} 
+                      deleteIntent={deleteIntent}/>
+                  </>
+                  :
+                  <NewWindow onUnload={haultWindowIntents} name="Intents View" title="Intents View">
+                    <input onChange={(e) => search_by_intent_name(e.target.value)} type = "text" placeholder = "Search By Intent Name 🔎"/>
+                    <IntentsListView 
+                      intents={intents}
+                      handleChangeIntent={handleChangeIntent} 
+                      deleteIntent={deleteIntent}/>
+                  </NewWindow>
+                }
               </div>
-            </>
-          :
-          <div className="animation-ctn">
-            <div className="icon icon--order-success svg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="154px" height="154px">  
-                  <g fill="none" stroke="#22AE73" strokeWidth="2"> 
-                    <circle className="circ" cx="77" cy="77" r="72"></circle>
-                    <circle id="colored" fill="#22AE73" cx="77" cy="77" r="72"></circle>
-                    <polyline className="st0" stroke="#fff" strokeWidth="10" points="43.5,77.8 63.7,97.9 112.2,49.4 "/>   
-                  </g> 
-                </svg>
-            </div>
+            </form>
           </div>
-        }
-      </div>
+
+          <div className="states-container">
+            <form className="splitted-form-at-config" onSubmit={(e) => handleSubmitState(e)}>
+              <h1>
+                States-form
+              </h1>
+              <br/>
+              <label>Choose the State's name</label>
+              <br/>
+              <input required ref={name_status} type = "text" placeholder = "State's name"/>
+              <br/>
+              <button type="button" onClick={toggleMode}>Toggle Mode</button> <span>(current = { mode.current ? modes[0] : modes[1] })</span> 
+              <br/>
+              <input className="expect-answers-input" ref={ans_status} type = "text" placeholder = {mode.current ? "Enter Answer(s)" : "Enter Choice(s) content"}/> 
+
+              { ! mode.current ? <input className="expect-answers-input" required type="text" placeholder="Redirect to State" value={redirect} onChange={(e) => verify_redirect_value(e)} /> : "" }
+              { mode.current ? <button type="button" onClick={appendMultAns}> ➕ </button> : <button type="button" onClick={appendChoices}> ➕  </button> }
+
+              <div className="mult-pool-container">
+                { mode.current ?
+                  <AnswersListView
+                    answers={answers}
+                    handleChangeMultAns={handleChangeMultAns}
+                    persistAns={persistAns}
+                    deleteMultAns={deleteMultAns}
+                    modify_state={modify_state}
+                    modify_intent={modify_intent}
+                    ANS_TYPE={ANS_TYPE}
+                  />
+                  :
+                  <ChoicesListView
+                    choices={choices}
+                    handleChangeChoice={handleChangeChoice}
+                    persistChoice={persistChoice}
+                    modify_state={modify_state}
+                    CHOICE_TYPE={CHOICE_TYPE}
+                  />
+                }
+              </div>
+              <br/>
+              <label>Execute when intent.</label><br/>
+              <input value={onIntent} onChange={(e) => verify_if_intent(e)} placeholder = "Execute When Intent"/>
+              <br/>
+              <div className="submit-button-form-container">
+                <button type="submit">{modify_state.type === STATE_TYPE ? "Persist State" : "Submit State"}</button>
+              </div>
+              <br/>
+              <hr/>
+              <div className="states-pool-container">
+                <button onClick={haultWindowStates} type="button">
+                  Open in new window
+                </button>
+                { !newWindowState ?
+                  <>
+                    <input onChange={(e) => search_by_state_name(e.target.value)} type = "text" placeholder = "Search By State Name 🔎"/>
+                    <StatesListView 
+                      states={states} 
+                      handleChangeState={handleChangeState} 
+                      deleteState={deleteState}/>
+                  </>
+                  :
+                  <NewWindow onUnload={haultWindowStates} name="States View" title="States View">
+                    <input onChange={(e) => search_by_state_name(e.target.value)} type = "text" placeholder = "Search By State Name 🔎"/>
+                    <StatesListView 
+                      states={states} 
+                      handleChangeState={handleChangeState} 
+                      deleteState={deleteState}/>
+                  </NewWindow>
+                }
+              </div>
+            </form>
+          </div>
+        </div>
       : 
-      <div style={{ width: '100vw', height: '100vh' }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}>
-          <Controls />
-          <Background variant="dots" gap={12} size={1} />
-        </ReactFlow>
-      </div>
+      <GraphView
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+      />
     }
   </div>
   );

@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 import auth from "./auth";
 import axios from 'axios';
 import Nav from "./Nav.js";
+
 import "./input.css";
 import "./form.css";
 import "./button.css";
@@ -12,6 +13,7 @@ import "./label.css";
 import "./nav.css";
 import "./span.css";
 
+import {ok} from "./globals.js";
 import { useSelector, useDispatch } from 'react-redux';
 import { isLoggedIn } from './isLoggedInSlice';
 import { REACT_APP_URL_LOGIN } from './globals.js';
@@ -27,10 +29,6 @@ function Login () {
   const NONE        = 2;
 
   const [status, setStatus] = useState ({content : "", type : NONE});
-
-  const ok = ( code ) => {
-    return code >= 200 && code < 300;
-  }
 
   const compute_class_name = () => {
     const type = status.type;

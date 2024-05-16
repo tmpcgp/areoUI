@@ -15,6 +15,8 @@ import "./svg.css";
 import "./button.css";
 */
 
+import MessagesListView from "./Components/MessagesListView.js";
+
 import "./demo.css";
 import { useSelector, useDispatch } from 'react-redux';
 import auth from "./auth";
@@ -230,7 +232,10 @@ function Demo() {
         <button disabled={disable} onClick={restart_server}>{disable ? "Restarting..." : "Restart the server."}</button>
       </div>
       <div className="chat-container">
-        {list_msgs}
+        <MessagesListView
+          messages={messages}
+          compute_class_name={compute_class_name}
+        />
       </div>
    </div>
   )
