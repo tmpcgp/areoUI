@@ -15,7 +15,6 @@ import toast, { Toaster } from 'react-hot-toast';
 import {ok} from "./globals.js";
 import { useSelector, useDispatch } from 'react-redux';
 import { isLoggedIn } from './isLoggedInSlice';
-import { REACT_APP_URL_ACC } from './globals.js';
 
 function Create () {
 
@@ -29,9 +28,11 @@ function Create () {
   const spec_ref = useRef();
 
   const [secret, setSecret] = useState("");
+  var REACT_APP_URL_CREATE_ACC_PROD;
 
   useEffect (() => {
     console.log("@Create component is mouting");
+    REACT_APP_URL_CREATE_ACC_PROD = window.RequestVars.requestvar("REACT_APP_URL_CREATE_ACC_PROD");
     if ( auth() ) {
       nav("/");
     }
@@ -71,7 +72,7 @@ function Create () {
     };
 
     // make a post request to the api
-    axios.post ( REACT_APP_URL_ACC, user_obj ).then ( (msg) => {
+    axios.post (REACT_APP_URL_CREATE_ACC_PROD, user_obj ).then ( (msg) => {
       console.log ( msg );
 
       const msg_info    = msg.data.msg; 

@@ -23,7 +23,6 @@ import auth from "./auth";
 import { socket } from "./socket";
 import { isLoggedIn } from './isLoggedInSlice';
 import toast, { Toaster } from 'react-hot-toast';
-import { REACT_APP_URL_RESTART_SERVER } from './globals.js';
 
 function Demo() {
 
@@ -38,6 +37,8 @@ function Demo() {
   const [state_conv, setState_conv] = useState("Initiating Conversation...");
   const [connected, setConnected]   = useState(socket.connected);
   var username                      = "[Human]";
+
+  var REACT_APP_URL_RESTART_SERVER_DEMO;
 
   const handle_on_error = () => {
     console.log("@handle_on_error");
@@ -59,7 +60,7 @@ function Demo() {
     setDisable(true);
 
     toast.promise (
-      axios.get( REACT_APP_URL_RESTART_SERVER  ), {
+      axios.get(REACT_APP_URL_RESTART_SERVER_DEMO), {
         loading:"Restarting the server.",
         success:() => handle_on_success,
         error  :() => handle_on_error,
@@ -101,6 +102,8 @@ function Demo() {
   }
 
   useEffect (() => {
+    console.log("@Demo compoonent is mouting.");
+    REACT_APP_URL_RESTART_SERVER_DEMO = window.RequestVars.requestvar("REACT_APP_URL_RESTART_SERVER_DEMO");
 
     if ( auth() ) {
       username = localStorage.getItem("name");

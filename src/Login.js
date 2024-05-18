@@ -16,7 +16,6 @@ import "./span.css";
 import {ok} from "./globals.js";
 import { useSelector, useDispatch } from 'react-redux';
 import { isLoggedIn } from './isLoggedInSlice';
-import { REACT_APP_URL_LOGIN } from './globals.js';
 
 function Login () {
 
@@ -29,6 +28,8 @@ function Login () {
   const NONE        = 2;
 
   const [status, setStatus] = useState ({content : "", type : NONE});
+
+  var REACT_APP_URL_LOGIN_PROD;
 
   const compute_class_name = () => {
     const type = status.type;
@@ -44,6 +45,7 @@ function Login () {
 
   useEffect ( () => {
     console.log("@Login mouting component");
+    REACT_APP_URL_LOGIN_PROD = window.RequestVars.requestvar("REACT_APP_URL_LOGIN_PROD");
 
     if ( auth() ) {
       // this will be the dev token : 9f01a721-debc-40c2-b5d5-00b6c39cf9ee
@@ -73,7 +75,7 @@ function Login () {
       key : input_value,
     };
 
-    axios.post ( REACT_APP_URL_LOGIN, data ).then ( (msg) => {
+    axios.post (REACT_APP_URL_LOGIN_PROD, data).then ( (msg) => {
       console.log ( msg );
 
       const msg_info    = msg.data.msg; 

@@ -28,7 +28,6 @@ import NewWindow from 'react-new-window'
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector, useDispatch } from 'react-redux';
 import { isLoggedIn } from './isLoggedInSlice';
-import {REACT_APP_URL_GET_CONFIG, REACT_APP_URL_CONFIG_DEMO} from "./globals.js";
 
 //docs : https://reactflow.dev/learn
 import React, { useCallback } from 'react';
@@ -95,6 +94,10 @@ function Config() {
   // hot keys [end]
 
 
+  // query those vars from the electron app.
+  let REACT_APP_URL_GET_CONFIG_ALL_PROD;
+  let REACT_APP_URL_CREATE_CONFIG_DEMO;
+
   // to show to everyone
   const [mode_viz, setModeViz]                = useState ( FORM );
   const [loading_intent, setLoading_intent]   = useState ("");
@@ -118,6 +121,12 @@ function Config() {
     (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
   );
+
+  useEffect(() => {
+    REACT_APP_URL_CREATE_CONFIG_DEMO  = window.RequestVars.requestvar("REACT_APP_URL_CREATE_CONFIG_DEMO");
+    REACT_APP_URL_GET_CONFIG_ALL_PROD = window.RequestVars.requestvar("REACT_APP_URL_GET_CONFIG_ALL_PROD");
+  },[]);
+
 
   useEffect(() => {
     if (mode_viz === GRAPH) {
@@ -202,7 +211,7 @@ function Config() {
     console.log("@data " + JSON.stringify(data));
     console.log("@key" + key);
 
-    axios.post (REACT_APP_URL_GET_CONFIG, data).then( (r) => {
+    axios.post(REACT_APP_URL_GET_CONFIG_ALL_PROD, data).then( (r) => {
       console.log ( r );
 
       const config_obj  = r.data.config;
@@ -846,7 +855,7 @@ function Config() {
     // localStorage.setItem("dconfig", config); // dconfig for demo-config
     
     toast.promise(
-      axios.post (REACT_APP_URL_CONFIG_DEMO, config),
+      axios.post (REACT_APP_URL_CREATE_CONFIG_DEMO, config),
       {
         loading : "Saving the demo-config RAM...",
         success : "Settings saved",
