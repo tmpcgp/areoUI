@@ -8,7 +8,6 @@ import "./form.css";
 import "./button.css";
 import "./container.css";
 import "./label.css";
-import "./nav.css";
 import "./span.css";
 
 import toast, { Toaster } from 'react-hot-toast';

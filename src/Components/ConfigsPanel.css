@@ -1,0 +1,9 @@
+.childrens {
+  font-family : 'Reddit Mono';
+  padding: 15px;
+  margin : 15px;
+  cursor:pointer;
+  border-style: solid;
+  border-radius: 6px;
+  background-color: #87ceeb;
+}

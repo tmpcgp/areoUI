@@ -1,6 +1,7 @@
-var {app, ipcMain, BrowserWindow, globalShortcut} = require("electron");
-const nodeFs                                      = require('fs');
-const nodePath                                    = require('path');
+var {app, ipcMain, BrowserWindow, globalShortcut, session} = require("electron");
+const nodeFs                                               = require('fs');
+const nodeOS                                               = require("os");
+const nodePath                                             = require('path');
 
 const url = "http://localhost:3000";
 const W   = 810;
@@ -12,6 +13,16 @@ let vars;
 const go_previous_page_command = "CommandOrControl+p";
 const disable                  = [go_previous_page_command];
 
+// for devs ONLY.
+// on macOS
+/*
+const reactDevToolsPath = path.join(
+  os.homedir(),
+)
+*/
+
+console.log(nodeOS.homedir());
+
 // reading config file
 // const configRootPath = nodePath.join(electronApp.getPath('userData'), 'dbConfig.json');
 try {
@@ -21,13 +32,13 @@ try {
   console.log("@something went wrong with err "+e);
 }
 
-const compute_vars = (event, varName) => {
+const compute_vars = async (event, varName) => {
   let value = vars[varName];
   console.log("react :: querying -> " + value);
   return value;
 };
 
-app.on ( 'ready', () => {
+app.on ( 'ready', async () => {
   disable.map((d) => {
     globalShortcut.register(d, () => {
       // mainwindow.webcontents.goback();
@@ -35,7 +46,9 @@ app.on ( 'ready', () => {
     });
   });
 
-  ipcMain.handle("requestvar", (event, arg) => compute_vars(event, arg));
+  ipcMain.handle("requestvar", async (event, arg) => {
+    return await compute_vars(event, arg);
+  });
 
   mainWindow = new BrowserWindow({
       width : W,

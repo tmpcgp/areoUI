@@ -9,15 +9,9 @@ import ReactFlow, {
 } from 'reactflow';
  
 function GraphView({nodes, edges, onNodesChange, onEdgesChange, onConnect}) {
-
-  const styles = {
-    background: '#C2DFF8',
-  };
-
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <ReactFlow
-        style={styles}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}

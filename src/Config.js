@@ -4,7 +4,7 @@ import axios from 'axios';
 import Nav from "./Nav.js";
 import auth from "./auth";
 import {quicksort, levenshtein}  from "./utils.js";
-
+import { useParams } from 'react-router-dom'
 import useHotkeys from "@reecelucas/react-use-hotkeys";
 
 import 'reactflow/dist/style.css';
@@ -62,6 +62,7 @@ function Config() {
   const ERR          = 1;
 
   // ref for intents
+  const id_config   = useParams();
   const name_intent = useRef();
   const t_sentences = useRef();
   const nav         = useNavigate();
@@ -123,8 +124,16 @@ function Config() {
   );
 
   useEffect(() => {
-    REACT_APP_URL_CREATE_CONFIG_DEMO  = window.RequestVars.requestvar("REACT_APP_URL_CREATE_CONFIG_DEMO");
-    REACT_APP_URL_GET_CONFIG_ALL_PROD = window.RequestVars.requestvar("REACT_APP_URL_GET_CONFIG_ALL_PROD");
+    // laoding globals 
+    window.RequestVars.requestvar("REACT_APP_URL_CREATE_CONFIG_DEMO").then((url) => {
+      REACT_APP_URL_CREATE_CONFIG_DEMO = url;
+    });
+    window.RequestVars.requestvar("REACT_APP_URL_GET_CONFIG_ALL_PROD").then((url) => {
+      REACT_APP_URL_GET_CONFIG_ALL_PROD = url;
+    });
+
+    // computing config
+    console.log("@id_config >> "+JSON.stringify(id_config.id));
   },[]);
 
 
@@ -200,6 +209,7 @@ function Config() {
     setModeViz(mode_viz === GRAPH ? FORM : GRAPH);
   }
 
+  /*
   const reconstitute_config = () => {
     console.log("@reconstitute_config");
     // make request
@@ -225,6 +235,7 @@ function Config() {
       toast.error("Something went wrong when connecting to the server. Couldn't restitute config file.", {id : "networking err" });
     });
   }
+  */
 
   const toggleMode = () => {
     console.log ( "@toogleMode" );

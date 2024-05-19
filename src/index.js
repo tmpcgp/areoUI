@@ -6,6 +6,7 @@ import Login from './Login';
 import Demo from './Demo';
 import Admin from './Admin';
 import About from './About';
+import ConfigsPanel from './Components/ConfigsPanel';
 import Config from './Config';
 import { Provider } from 'react-redux';
 import { createBrowserRouter, RouterProvider, } from "react-router-dom";
@@ -17,8 +18,12 @@ const router = createBrowserRouter([
     element: <App/>,
   },
   {
-    path: "/config",
-    element: <Config/>,
+    path: "/configs",
+    element: <ConfigsPanel/>,
+  },
+  {
+    path: "/config/:id",
+    element: <Config/>
   },
   {
     path : "/about",
