@@ -132,8 +132,27 @@ function Config() {
       REACT_APP_URL_GET_CONFIG_ALL_PROD = url;
     });
 
+    // loading demos ?
+    const storage = JSON.parse(localStorage.getItem("dconfig"));
+
+    console.log("@storage >> "+JSON.stringify(storage));
+    console.log("@storage.intents >> "+JSON.stringify(storage.intents));
+    console.log("@storage.states  >> "+JSON.stringify(storage.states));
+
+    setIntents(storage.intents);
+    setStates(storage.states);
+
+    /*
+    const config        = {
+      intents : intents,
+      states  : states ,
+    };
+    */
+
     // computing config
+    /* for the demo at school, since the backend is not finished.
     console.log("@id_config >> "+JSON.stringify(id_config.id));
+    */
   },[]);
 
 
@@ -863,7 +882,9 @@ function Config() {
 
     console.log("@handleDemo(states)  " + JSON.stringify(intents));
     console.log("@handleDemo(intents) " + JSON.stringify(states));
-    // localStorage.setItem("dconfig", config); // dconfig for demo-config
+    console.log("@dconfig >> "+JSON.stringify(config));
+
+    localStorage.setItem("dconfig", JSON.stringify(config)); // dconfig for demo-config
     
     toast.promise(
       axios.post (REACT_APP_URL_CREATE_CONFIG_DEMO, config),

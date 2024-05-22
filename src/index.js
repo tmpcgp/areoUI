@@ -17,12 +17,16 @@ const router = createBrowserRouter([
     path: "/",
     element: <App/>,
   },
+  /* for the demo at school, since the backend is not finished.
   {
     path: "/configs",
     element: <ConfigsPanel/>,
   },
+  */
   {
-    path: "/config/:id",
+    path: /* for the demo at school, since the backend is not finished.
+    "/config/:id"
+    */ "/config",
     element: <Config/>
   },
   {

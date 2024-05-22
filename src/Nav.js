@@ -22,7 +22,9 @@ function Nav () {
         break;
 
       case 1:
-        nav("/configs")
+        nav(/* for the demo at school, since the backend is not finished.
+        "/configs"
+        */ "/config")
         break;
 
       case 2:
@@ -60,7 +62,7 @@ function Nav () {
       onChange={(_, newValue) => handleChange(newValue)}
     >
       <BottomNavigationAction label="Home"/>
-      <BottomNavigationAction label="Configs"/>
+      <BottomNavigationAction label=/*"Configs"*/"Config"/>
       <BottomNavigationAction label="Demo"/>
       { isLogged_in  ? <BottomNavigationAction label="Logout"/> : "" } 
       { !isLogged_in ? <BottomNavigationAction label="Create"/> : "" } 
